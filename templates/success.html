@@ -1,16 +1,519 @@
-<!-- templates/success.html -->
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Download Successful</title>
-    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <title>Download Complete - ProTube</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary: #0066FF;
+            --primary-hover: #0052CC;
+            --secondary: #6B73FF;
+            --success: #2ED573;
+            --success-bg: #E8F8F1;
+            
+            --bg-primary: #FAFBFC;
+            --bg-secondary: #FFFFFF;
+            --bg-tertiary: #F8F9FA;
+            
+            --text-primary: #1A1D29;
+            --text-secondary: #6B7280;
+            --text-tertiary: #9CA3AF;
+            
+            --border-light: #E5E7EB;
+            --border-medium: #D1D5DB;
+            
+            --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+            --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+            --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+            --shadow-xl: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+            
+            --radius-sm: 6px;
+            --radius-md: 8px;
+            --radius-lg: 12px;
+            --radius-xl: 16px;
+            --radius-2xl: 20px;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            color: var(--text-primary);
+            font-weight: 400;
+            line-height: 1.6;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+
+        .container {
+            width: 100%;
+            max-width: 600px;
+            background: var(--bg-secondary);
+            border-radius: var(--radius-2xl);
+            box-shadow: var(--shadow-xl);
+            border: 1px solid var(--border-light);
+            overflow: hidden;
+            position: relative;
+        }
+
+        /* Success Header with animated background */
+        .success-header {
+            background: linear-gradient(135deg, var(--success) 0%, #26C766 100%);
+            padding: 40px 40px 30px;
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .success-header::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: radial-gradient(circle at center, rgba(255, 255, 255, 0.1) 0%, transparent 70%);
+            animation: shimmer 3s infinite;
+        }
+
+        @keyframes shimmer {
+            0% { transform: translateX(-100%) translateY(-100%); }
+            100% { transform: translateX(100%) translateY(100%); }
+        }
+
+        .success-icon {
+            position: relative;
+            z-index: 2;
+            display: inline-block;
+            width: 80px;
+            height: 80px;
+            background: rgba(255, 255, 255, 0.2);
+            border-radius: 50%;
+            margin-bottom: 24px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            animation: successBounce 0.8s ease-out;
+        }
+
+        .success-icon i {
+            font-size: 36px;
+            color: white;
+        }
+
+        @keyframes successBounce {
+            0% { transform: scale(0); opacity: 0; }
+            50% { transform: scale(1.2); opacity: 1; }
+            100% { transform: scale(1); opacity: 1; }
+        }
+
+        .success-title {
+            font-size: 32px;
+            font-weight: 700;
+            color: white;
+            margin-bottom: 8px;
+            position: relative;
+            z-index: 2;
+        }
+
+        .success-subtitle {
+            font-size: 16px;
+            color: rgba(255, 255, 255, 0.9);
+            position: relative;
+            z-index: 2;
+            font-weight: 400;
+        }
+
+        /* Main Content */
+        .main-content {
+            padding: 40px;
+        }
+
+        /* Video Info Card */
+        .video-card {
+            background: var(--bg-tertiary);
+            border-radius: var(--radius-xl);
+            padding: 24px;
+            margin-bottom: 32px;
+            border: 1px solid var(--border-light);
+            transition: all 0.3s ease;
+        }
+
+        .video-card:hover {
+            box-shadow: var(--shadow-md);
+            transform: translateY(-2px);
+        }
+
+        .video-preview {
+            display: flex;
+            gap: 20px;
+            align-items: flex-start;
+        }
+
+        .video-thumbnail {
+            width: 140px;
+            height: 78px;
+            object-fit: cover;
+            border-radius: var(--radius-lg);
+            box-shadow: var(--shadow-sm);
+            flex-shrink: 0;
+        }
+
+        .video-details {
+            flex: 1;
+            min-width: 0;
+        }
+
+        .video-title {
+            font-size: 18px;
+            font-weight: 600;
+            color: var(--text-primary);
+            line-height: 1.4;
+            margin-bottom: 8px;
+            display: -webkit-box;
+            -webkit-line-clamp: 2;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+        }
+
+        .video-meta {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            color: var(--text-secondary);
+            font-size: 14px;
+        }
+
+        .video-meta .status {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            color: var(--success);
+            font-weight: 500;
+        }
+
+        /* Action Buttons */
+        .actions {
+            display: flex;
+            gap: 12px;
+            justify-content: center;
+            margin-bottom: 32px;
+        }
+
+        .btn {
+            padding: 14px 24px;
+            border: none;
+            border-radius: var(--radius-lg);
+            font-weight: 600;
+            font-size: 15px;
+            cursor: pointer;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            min-width: 160px;
+            justify-content: center;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .btn::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+            transition: left 0.5s;
+        }
+
+        .btn:hover::before {
+            left: 100%;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 100%);
+            color: white;
+            box-shadow: var(--shadow-md);
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 12px 25px rgba(0, 102, 255, 0.3);
+        }
+
+        .btn-secondary {
+            background: var(--bg-secondary);
+            color: var(--text-primary);
+            border: 2px solid var(--border-medium);
+        }
+
+        .btn-secondary:hover {
+            background: var(--bg-tertiary);
+            border-color: var(--primary);
+            color: var(--primary);
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-md);
+        }
+
+        /* Info Footer */
+        .info-footer {
+            background: var(--bg-tertiary);
+            padding: 24px 40px;
+            border-top: 1px solid var(--border-light);
+            text-align: center;
+        }
+
+        .info-text {
+            color: var(--text-secondary);
+            font-size: 14px;
+            line-height: 1.6;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+        }
+
+        .info-text i {
+            color: var(--primary);
+            font-size: 16px;
+        }
+
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            body {
+                padding: 16px;
+            }
+
+            .container {
+                max-width: 100%;
+            }
+
+            .success-header {
+                padding: 32px 24px 24px;
+            }
+
+            .success-title {
+                font-size: 28px;
+            }
+
+            .success-subtitle {
+                font-size: 15px;
+            }
+
+            .main-content {
+                padding: 32px 24px;
+            }
+
+            .video-preview {
+                flex-direction: column;
+                text-align: center;
+            }
+
+            .video-thumbnail {
+                width: 100%;
+                height: auto;
+                max-width: 280px;
+                align-self: center;
+            }
+
+            .actions {
+                flex-direction: column;
+                align-items: center;
+            }
+
+            .btn {
+                width: 100%;
+                max-width: 280px;
+            }
+
+            .info-footer {
+                padding: 20px 24px;
+            }
+
+            .info-text {
+                flex-direction: column;
+                gap: 4px;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .success-header {
+                padding: 28px 20px 20px;
+            }
+
+            .success-icon {
+                width: 70px;
+                height: 70px;
+                margin-bottom: 20px;
+            }
+
+            .success-icon i {
+                font-size: 32px;
+            }
+
+            .success-title {
+                font-size: 24px;
+            }
+
+            .main-content {
+                padding: 24px 20px;
+            }
+
+            .video-card {
+                padding: 20px;
+            }
+
+            .info-footer {
+                padding: 20px;
+            }
+        }
+
+        /* Animation for page load */
+        @keyframes slideUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .container {
+            animation: slideUp 0.6s ease-out;
+        }
+    </style>
 </head>
 <body>
-    <h1>Download Successful</h1>
-    <p>Video Title: {{ title }}</p>
-    <img src="{{ thumbnail }}" alt="Thumbnail">
-    <p><a href="/">Back to Home</a></p>
+    <div class="container">
+        <!-- Success Header -->
+        <div class="success-header">
+            <div class="success-icon">
+                <i class="fas fa-check"></i>
+            </div>
+            <h1 class="success-title">Download Complete!</h1>
+            <p class="success-subtitle">Your video has been successfully downloaded and saved.</p>
+        </div>
+
+        <!-- Main Content -->
+        <div class="main-content">
+            <!-- Video Info Card -->
+            <div class="video-card">
+                <div class="video-preview">
+                    <img src="{{ thumbnail }}" alt="Video thumbnail" class="video-thumbnail">
+                    <div class="video-details">
+                        <h3 class="video-title">{{ title }}</h3>
+                        <div class="video-meta">
+                            <span class="status">
+                                <i class="fas fa-check-circle"></i>
+                                Downloaded
+                            </span>
+                            <span>•</span>
+                            <span>
+                                <i class="fas fa-folder"></i>
+                                Saved to Downloads
+                            </span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Action Buttons -->
+            <div class="actions">
+                <a href="/" class="btn btn-primary">
+                    <i class="fas fa-download"></i>
+                    Download Another Video
+                </a>
+                <a href="/#history-tab" class="btn btn-secondary">
+                    <i class="fas fa-history"></i>
+                    View Download History
+                </a>
+            </div>
+        </div>
+
+        <!-- Info Footer -->
+        <div class="info-footer">
+            <p class="info-text">
+                <i class="fas fa-info-circle"></i>
+                <span>Files are saved to the server's downloads folder. Use the modern interface for better download management and progress tracking.</span>
+            </p>
+        </div>
+    </div>
+
+    <script>
+        // Add some subtle interactions
+        document.addEventListener('DOMContentLoaded', function() {
+            // Add hover effect to video card
+            const videoCard = document.querySelector('.video-card');
+            if (videoCard) {
+                videoCard.addEventListener('mouseenter', function() {
+                    this.style.transform = 'translateY(-4px)';
+                });
+
+                videoCard.addEventListener('mouseleave', function() {
+                    this.style.transform = 'translateY(-2px)';
+                });
+            }
+
+            // Add click animation to buttons
+            const buttons = document.querySelectorAll('.btn');
+            buttons.forEach(btn => {
+                btn.addEventListener('click', function(e) {
+                    // Create ripple effect
+                    const ripple = document.createElement('span');
+                    const rect = this.getBoundingClientRect();
+                    const size = Math.max(rect.width, rect.height);
+                    const x = e.clientX - rect.left - size / 2;
+                    const y = e.clientY - rect.top - size / 2;
+                    
+                    ripple.style.cssText = `
+                        position: absolute;
+                        width: ${size}px;
+                        height: ${size}px;
+                        left: ${x}px;
+                        top: ${y}px;
+                        background: rgba(255, 255, 255, 0.3);
+                        border-radius: 50%;
+                        transform: scale(0);
+                        animation: ripple 0.6s linear;
+                        pointer-events: none;
+                    `;
+                    
+                    this.appendChild(ripple);
+                    
+                    setTimeout(() => {
+                        ripple.remove();
+                    }, 600);
+                });
+            });
+
+            // Add CSS for ripple animation
+            const style = document.createElement('style');
+            style.textContent = `
+                @keyframes ripple {
+                    to {
+                        transform: scale(2);
+                        opacity: 0;
+                    }
+                }
+            `;
+            document.head.appendChild(style);
+        });
+    </script>
 </body>
 </html>

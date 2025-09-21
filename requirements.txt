@@ -1,2 +1,6 @@
-pytube
-flask
+flask==3.0.0
+pytube==15.0.0
+pytubefix==6.10.2
+yt-dlp==2023.12.30
+requests==2.31.0
+Werkzeug==3.0.1
